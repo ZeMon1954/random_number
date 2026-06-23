@@ -5,35 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>สุ่มเลขหวย 🎰</title>
   <style>
+    :root {
+      --bg1: #1a1a2e;
+      --bg2: #16213e;
+      --bg3: #0f3460;
+      --accent1: #f9c74f;
+      --accent2: #f8961e;
+      --accent3: #f3722c;
+      --rev-color: #90cdf4;
+      --rev-bg: rgba(100,200,255,0.08);
+      --rev-border: rgba(100,200,255,0.35);
+      --glow: rgba(249,199,79,0.45);
+      --card-bg: rgba(255,255,255,0.07);
+      --card-border: rgba(255,255,255,0.12);
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
       font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif;
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 16px 48px;
+      padding: 24px 16px 60px;
+      transition: background 0.5s;
     }
+
+    /* ── Theme switcher ── */
+    .themes-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .theme-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .theme-dot:hover { transform: scale(1.2); }
+    .theme-dot.active { border-color: #fff; transform: scale(1.15); }
+    .theme-dot::after {
+      content: attr(data-name);
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+      color: #a0aec0;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .theme-dot:hover::after { opacity: 1; }
 
     h1 {
       font-size: 2rem;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: 2px;
       margin-bottom: 6px;
-      background: linear-gradient(90deg, #f9c74f, #f8961e, #f3722c);
+      background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .subtitle {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: #a0aec0;
-      margin-bottom: 32px;
-      letter-spacing: 1px;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
     }
 
     /* ── Tabs ── */
@@ -43,46 +94,47 @@
       background: rgba(255,255,255,0.06);
       border-radius: 16px;
       padding: 6px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-      justify-content: center;
+      margin-bottom: 24px;
     }
 
     .tab {
-      padding: 8px 20px;
+      padding: 9px 26px;
       border-radius: 12px;
       border: none;
       cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-size: 0.95rem;
+      font-weight: 700;
       transition: all 0.25s;
       background: transparent;
       color: #a0aec0;
     }
 
     .tab.active {
-      background: linear-gradient(135deg, #f9c74f, #f8961e);
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
       color: #1a1a2e;
+      box-shadow: 0 4px 14px var(--glow);
     }
 
-    .tab:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
+    .tab:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.08); }
 
     /* ── Card ── */
     .card {
-      background: rgba(255,255,255,0.07);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 24px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
       padding: 32px 28px;
       width: 100%;
-      max-width: 480px;
+      max-width: 500px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
+      gap: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
     }
 
-    /* ── Options row ── */
+    /* ── Options ── */
     .options {
       display: flex;
       gap: 10px;
@@ -91,21 +143,21 @@
     }
 
     .opt-btn {
-      padding: 7px 18px;
+      padding: 8px 20px;
       border-radius: 50px;
-      border: 1.5px solid rgba(255,255,255,0.2);
+      border: 1.5px solid rgba(255,255,255,0.18);
       background: transparent;
       color: #cbd5e0;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       cursor: pointer;
       transition: all 0.2s;
       font-weight: 600;
     }
 
     .opt-btn.active {
-      border-color: #f9c74f;
+      border-color: var(--accent1);
       background: rgba(249,199,79,0.15);
-      color: #f9c74f;
+      color: var(--accent1);
     }
 
     .opt-btn:hover:not(.active) { border-color: #fff; color: #fff; }
@@ -115,107 +167,194 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       width: 100%;
     }
 
     .result-label {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: #90a4ae;
-      letter-spacing: 2px;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
     }
 
     .digits-wrap {
       display: flex;
-      gap: 12px;
+      gap: 14px;
       align-items: center;
       justify-content: center;
     }
 
     .digit-box {
-      width: 72px;
-      height: 90px;
-      border-radius: 16px;
-      background: linear-gradient(160deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+      width: 76px;
+      height: 96px;
+      border-radius: 18px;
+      background: linear-gradient(160deg, rgba(255,255,255,0.13), rgba(255,255,255,0.04));
       border: 1.5px solid rgba(255,255,255,0.18);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 3rem;
+      font-size: 3.2rem;
       font-weight: 900;
-      color: #f9c74f;
-      text-shadow: 0 0 20px rgba(249,199,79,0.5);
+      color: var(--accent1);
+      text-shadow: 0 0 24px var(--glow);
       transition: transform 0.1s;
       user-select: none;
+      position: relative;
+      overflow: hidden;
     }
 
-    .digit-box.spin {
-      animation: spin 0.4s ease-out;
+    .digit-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, transparent 100%);
+      border-radius: 18px;
     }
 
-    @keyframes spin {
-      0%   { transform: rotateX(0deg);   opacity: 1; }
-      40%  { transform: rotateX(90deg);  opacity: 0.3; }
-      70%  { transform: rotateX(-20deg); opacity: 0.8; }
-      100% { transform: rotateX(0deg);   opacity: 1; }
+    .digit-box.spin { animation: flipIn 0.45s cubic-bezier(.36,.07,.19,.97); }
+
+    @keyframes flipIn {
+      0%   { transform: rotateX(0deg) scale(1);    filter: blur(0px); }
+      35%  { transform: rotateX(90deg) scale(0.9); filter: blur(4px); }
+      65%  { transform: rotateX(-15deg) scale(1.05); filter: blur(1px); }
+      100% { transform: rotateX(0deg) scale(1);    filter: blur(0px); }
     }
 
-    .dot-sep { font-size: 2rem; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
-
-    /* ── กลับ badge ── */
+    /* ── Reverse ── */
     .reverse-row {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
+      background: var(--rev-bg);
+      border: 1px dashed var(--rev-border);
+      border-radius: 14px;
+      padding: 10px 18px;
     }
 
-    .arrow-icon { font-size: 1.2rem; color: #a0aec0; }
+    .rev-label { font-size: 0.72rem; color: var(--rev-color); letter-spacing: 1px; opacity: 0.8; }
 
-    .reverse-digits {
-      display: flex;
-      gap: 8px;
-    }
+    .reverse-digits { display: flex; gap: 8px; }
 
     .rev-box {
-      width: 52px;
-      height: 66px;
+      width: 50px;
+      height: 62px;
       border-radius: 12px;
-      background: rgba(100,200,255,0.08);
-      border: 1.5px dashed rgba(100,200,255,0.35);
+      background: rgba(0,0,0,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 2rem;
       font-weight: 800;
-      color: #90cdf4;
+      color: var(--rev-color);
     }
 
-    /* ── Buttons ── */
+    /* ── Count ── */
+    .count-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .count-label { font-size: 0.82rem; color: #a0aec0; white-space: nowrap; }
+
+    .count-row input[type=range] {
+      flex: 1;
+      accent-color: var(--accent1);
+      height: 4px;
+      cursor: pointer;
+    }
+
+    .count-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--accent1);
+      min-width: 28px;
+      text-align: center;
+    }
+
+    /* ── Spin Button ── */
     .btn-spin {
       width: 100%;
-      padding: 16px;
-      border-radius: 16px;
+      padding: 17px;
+      border-radius: 18px;
       border: none;
-      background: linear-gradient(135deg, #f9c74f, #f8961e);
+      background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
+      background-size: 200% 200%;
       color: #1a1a2e;
-      font-size: 1.1rem;
-      font-weight: 800;
+      font-size: 1.15rem;
+      font-weight: 900;
       cursor: pointer;
-      letter-spacing: 1px;
-      transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 6px 24px rgba(249,199,79,0.35);
+      letter-spacing: 1.5px;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      box-shadow: 0 8px 28px var(--glow);
+      animation: gradShift 3s ease infinite;
     }
 
-    .btn-spin:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(249,199,79,0.45); }
-    .btn-spin:active { transform: translateY(0); }
+    @keyframes gradShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-    .btn-spin:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-spin:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px var(--glow);
+    }
+
+    .btn-spin:active:not(:disabled) { transform: translateY(0); }
+    .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Sound toggle ── */
+    .sound-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-end;
+    }
+
+    .sound-toggle {
+      width: 40px;
+      height: 22px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50px;
+      cursor: pointer;
+      border: none;
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    .sound-toggle.on { background: linear-gradient(90deg, var(--accent1), var(--accent2)); }
+
+    .sound-toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: left 0.3s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    .sound-toggle.on::after { left: 21px; }
+    .sound-label { font-size: 0.78rem; color: #a0aec0; }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 2px 0;
+    }
 
     /* ── History ── */
     .history-section {
       width: 100%;
-      max-width: 480px;
+      max-width: 500px;
       margin-top: 24px;
     }
 
@@ -226,17 +365,13 @@
       margin-bottom: 12px;
     }
 
-    .history-title {
-      font-size: 0.85rem;
-      color: #a0aec0;
-      letter-spacing: 1px;
-    }
+    .history-title { font-size: 0.85rem; color: #a0aec0; letter-spacing: 1.5px; }
 
     .btn-clear {
       background: transparent;
       border: 1px solid rgba(255,255,255,0.15);
       color: #a0aec0;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 8px;
       font-size: 0.78rem;
       cursor: pointer;
@@ -249,7 +384,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 280px;
+      max-height: 300px;
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -260,278 +395,465 @@
     .history-item {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 10px 16px;
+      border-radius: 14px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      animation: fadeIn 0.3s ease;
+      animation: fadeSlide 0.3s ease;
     }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-    .h-num { font-size: 1.4rem; font-weight: 800; color: #f9c74f; letter-spacing: 4px; }
-    .h-rev { font-size: 1rem; color: #90cdf4; letter-spacing: 3px; }
+    .h-num {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent1);
+      letter-spacing: 5px;
+    }
+
+    .h-rev {
+      font-size: 0.95rem;
+      color: var(--rev-color);
+      letter-spacing: 3px;
+      margin-left: 6px;
+    }
+
     .h-tag {
       font-size: 0.72rem;
       padding: 3px 10px;
       border-radius: 50px;
       background: rgba(249,199,79,0.15);
-      color: #f9c74f;
-      font-weight: 600;
-    }
-    .h-tag.t2 { background: rgba(144,205,244,0.15); color: #90cdf4; }
-
-    .empty-msg { text-align: center; color: #4a5568; font-size: 0.85rem; padding: 20px; }
-
-    /* ── Count selector ── */
-    .count-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-    }
-
-    .count-label { font-size: 0.82rem; color: #a0aec0; white-space: nowrap; }
-
-    .count-row input[type=range] {
-      flex: 1;
-      accent-color: #f9c74f;
-    }
-
-    .count-val {
-      font-size: 0.9rem;
+      color: var(--accent1);
       font-weight: 700;
-      color: #f9c74f;
-      min-width: 28px;
-      text-align: center;
     }
 
-    /* responsive */
-    @media (max-width: 360px) {
-      .digit-box { width: 60px; height: 76px; font-size: 2.4rem; }
-      .rev-box   { width: 44px; height: 56px; font-size: 1.6rem; }
+    .h-tag.t2 { background: rgba(144,205,244,0.15); color: var(--rev-color); }
+
+    .h-time { font-size: 0.68rem; color: #4a5568; }
+
+    .empty-msg { text-align: center; color: #4a5568; font-size: 0.85rem; padding: 24px; }
+
+    /* ── Confetti canvas ── */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @media (max-width: 380px) {
+      .digit-box { width: 64px; height: 82px; font-size: 2.6rem; }
+      .rev-box   { width: 42px; height: 54px; font-size: 1.6rem; }
     }
   </style>
 </head>
 <body>
 
-  <h1>🎰 สุ่มเลขหวย</h1>
-  <p class="subtitle">LUCKY NUMBER GENERATOR</p>
+<canvas id="confettiCanvas"></canvas>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" onclick="setMode('3')">3 ตัว</button>
-    <button class="tab" onclick="setMode('2')">2 ตัว</button>
+<h1>🎰 สุ่มเลขหวย</h1>
+<p class="subtitle">LUCKY NUMBER GENERATOR</p>
+
+<!-- Theme dots -->
+<div class="themes-row" id="themesRow"></div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="setMode('3')">เลข 3 ตัว</button>
+  <button class="tab" onclick="setMode('2')">เลข 2 ตัว</button>
+</div>
+
+<!-- Card -->
+<div class="card">
+
+  <!-- บน/ล่าง -->
+  <div class="options">
+    <button class="opt-btn active" onclick="setPos('บน')">บน</button>
+    <button class="opt-btn" onclick="setPos('ล่าง')">ล่าง</button>
+    <button class="opt-btn" onclick="setPos('บน+ล่าง')">บน + ล่าง</button>
   </div>
 
-  <!-- Card -->
-  <div class="card">
-
-    <!-- บน/ล่าง options -->
-    <div class="options" id="posOptions">
-      <button class="opt-btn active" onclick="setPos('บน')">บน</button>
-      <button class="opt-btn" onclick="setPos('ล่าง')">ล่าง</button>
-      <button class="opt-btn" onclick="setPos('บน+ล่าง')">บน + ล่าง</button>
-    </div>
-
-    <!-- จำนวนที่สุ่ม -->
-    <div class="count-row">
-      <span class="count-label">จำนวนที่สุ่ม</span>
-      <input type="range" id="countRange" min="1" max="5" value="1" oninput="updateCount(this.value)" />
-      <span class="count-val" id="countVal">1</span>
-    </div>
-
-    <!-- Display -->
-    <div class="display-area" id="displayArea">
-      <!-- filled by JS -->
-    </div>
-
-    <!-- Spin button -->
-    <button class="btn-spin" id="spinBtn" onclick="spin()">🎲 สุ่มเลข!</button>
-
+  <!-- Count -->
+  <div class="count-row">
+    <span class="count-label">จำนวนที่สุ่ม</span>
+    <input type="range" id="countRange" min="1" max="5" value="1" oninput="updateCount(this.value)" />
+    <span class="count-val" id="countVal">1</span>
   </div>
 
-  <!-- History -->
-  <div class="history-section">
-    <div class="history-header">
-      <span class="history-title">📋 ประวัติการสุ่ม</span>
-      <button class="btn-clear" onclick="clearHistory()">ล้างประวัติ</button>
-    </div>
-    <div class="history-list" id="historyList">
-      <p class="empty-msg">ยังไม่มีการสุ่ม กดปุ่มด้านบนเลย!</p>
-    </div>
+  <!-- Display -->
+  <div class="display-area" id="displayArea"></div>
+
+  <!-- Spin -->
+  <button class="btn-spin" id="spinBtn" onclick="spin()">🎲 สุ่มเลข!</button>
+
+  <!-- Sound toggle -->
+  <div class="sound-row">
+    <span class="sound-label">🔊 เสียง</span>
+    <button class="sound-toggle on" id="soundToggle" onclick="toggleSound()"></button>
   </div>
+
+</div>
+
+<!-- History -->
+<div class="history-section">
+  <div class="history-header">
+    <span class="history-title">📋 ประวัติการสุ่ม</span>
+    <button class="btn-clear" onclick="clearHistory()">ล้างประวัติ</button>
+  </div>
+  <div class="history-list" id="historyList">
+    <p class="empty-msg">ยังไม่มีการสุ่ม กดปุ่มด้านบนเลย!</p>
+  </div>
+</div>
 
 <script>
-  let mode = '3';       // '2' | '3'
-  let pos  = 'บน';
-  let count = 1;
-  let history = JSON.parse(localStorage.getItem('lotto_history') || '[]');
-  let spinning = false;
-
-  function setMode(m) {
-    mode = m;
-    document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', (i === 0 && m === '3') || (i === 1 && m === '2'));
-    });
-    resetDisplay();
-  }
-
-  function setPos(p) {
-    pos = p;
-    document.querySelectorAll('.opt-btn').forEach(b => {
-      b.classList.toggle('active', b.textContent === p);
-    });
-  }
-
-  function updateCount(v) {
-    count = parseInt(v);
-    document.getElementById('countVal').textContent = v;
-  }
-
-  function rand(digits) {
-    const max = Math.pow(10, digits);
-    return Math.floor(Math.random() * max).toString().padStart(digits, '0');
-  }
-
-  function reverse(str) { return str.split('').reverse().join(''); }
-
-  function resetDisplay() {
-    const area = document.getElementById('displayArea');
-    const digits = mode === '3' ? 3 : 2;
-    const placeholder = '?'.repeat(digits);
-    area.innerHTML = buildDisplayHTML(placeholder.split(''), placeholder, false);
-  }
-
-  function buildDisplayHTML(digitArr, num, showReverse) {
-    const boxes = digitArr.map(d => `<div class="digit-box">${d}</div>`).join('');
-    const rev = reverse(num);
-    const revBoxes = rev.split('').map(d => `<div class="rev-box">${d}</div>`).join('');
-    const revSection = showReverse && rev !== num ? `
-      <div class="reverse-row">
-        <span class="arrow-icon">🔄</span>
-        <div class="reverse-digits">${revBoxes}</div>
-        <span style="font-size:0.75rem;color:#90cdf4;">กลับ</span>
-      </div>` : '';
-    return `
-      <span class="result-label">${mode === '3' ? 'เลขท้าย 3 ตัว' : 'เลขท้าย 2 ตัว'} — ${pos}</span>
-      <div class="digits-wrap">${boxes}</div>
-      ${revSection}
-    `;
-  }
-
-  function animateDigits(finalNums) {
-    const area = document.getElementById('displayArea');
-    const digits = mode === '3' ? 3 : 2;
-
-    // For multiple, just do first one animated then show all
-    const first = finalNums[0];
-    area.innerHTML = buildDisplayHTML(first.split(''), first, false);
-    const boxes = area.querySelectorAll('.digit-box');
-    boxes.forEach(b => b.classList.add('spin'));
-
-    let frame = 0;
-    const total = 18;
-    const iv = setInterval(() => {
-      frame++;
-      const tempArr = Array.from({length: digits}, () => Math.floor(Math.random()*10).toString());
-      boxes.forEach((b, i) => {
-        if (frame >= total - digits + i) {
-          b.textContent = first[i];
-        } else {
-          b.textContent = tempArr[i];
-        }
-      });
-      if (frame >= total) {
-        clearInterval(iv);
-        boxes.forEach(b => b.classList.remove('spin'));
-        showAll(finalNums);
-        spinning = false;
-        document.getElementById('spinBtn').disabled = false;
-      }
-    }, 55);
-  }
-
-  function showAll(nums) {
-    const area = document.getElementById('displayArea');
-    const digits = mode === '3' ? 3 : 2;
-    let html = `<span class="result-label">${mode === '3' ? 'เลขท้าย 3 ตัว' : 'เลขท้าย 2 ตัว'} — ${pos}</span>`;
-
-    nums.forEach((num, idx) => {
-      const rev = reverse(num);
-      const boxes = num.split('').map(d => `<div class="digit-box">${d}</div>`).join('');
-      html += `<div class="digits-wrap">${boxes}</div>`;
-      if (rev !== num) {
-        const revBoxes = rev.split('').map(d => `<div class="rev-box">${d}</div>`).join('');
-        html += `<div class="reverse-row">
-          <span class="arrow-icon">🔄</span>
-          <div class="reverse-digits">${revBoxes}</div>
-          <span style="font-size:0.75rem;color:#90cdf4;">กลับ</span>
-        </div>`;
-      }
-      if (idx < nums.length - 1) html += `<div style="width:100%;height:1px;background:rgba(255,255,255,0.08);margin:4px 0;"></div>`;
-    });
-
-    area.innerHTML = html;
-  }
-
-  function spin() {
-    if (spinning) return;
-    spinning = true;
-    document.getElementById('spinBtn').disabled = true;
-
-    const digits = mode === '3' ? 3 : 2;
-    const positions = pos === 'บน+ล่าง' ? ['บน', 'ล่าง'] : [pos];
-    const results = [];
-
-    for (let i = 0; i < count; i++) {
-      positions.forEach(p => {
-        results.push({ num: rand(digits), pos: p, mode });
-      });
+/* ══════════════════════════════════════
+   THEMES
+══════════════════════════════════════ */
+const THEMES = [
+  {
+    name: 'ทอง',
+    dot: 'linear-gradient(135deg,#f9c74f,#f8961e)',
+    vars: {
+      '--bg1':'#1a1a2e','--bg2':'#16213e','--bg3':'#0f3460',
+      '--accent1':'#f9c74f','--accent2':'#f8961e','--accent3':'#f3722c',
+      '--rev-color':'#90cdf4','--rev-bg':'rgba(100,200,255,0.08)',
+      '--rev-border':'rgba(100,200,255,0.35)','--glow':'rgba(249,199,79,0.45)',
+      '--card-bg':'rgba(255,255,255,0.07)','--card-border':'rgba(255,255,255,0.12)'
     }
-
-    const nums = results.map(r => r.num);
-    animateDigits(nums);
-
-    results.forEach(r => {
-      history.unshift({ ...r, rev: reverse(r.num), time: new Date().toLocaleTimeString('th-TH') });
-    });
-    if (history.length > 50) history = history.slice(0, 50);
-    localStorage.setItem('lotto_history', JSON.stringify(history));
-    renderHistory();
-  }
-
-  function renderHistory() {
-    const list = document.getElementById('historyList');
-    if (history.length === 0) {
-      list.innerHTML = '<p class="empty-msg">ยังไม่มีการสุ่ม กดปุ่มด้านบนเลย!</p>';
-      return;
+  },
+  {
+    name: 'เขียว',
+    dot: 'linear-gradient(135deg,#43e97b,#38f9d7)',
+    vars: {
+      '--bg1':'#0b2218','--bg2':'#0d2b1f','--bg3':'#0e3828',
+      '--accent1':'#43e97b','--accent2':'#38f9d7','--accent3':'#00d4aa',
+      '--rev-color':'#b9fbc0','--rev-bg':'rgba(67,233,123,0.08)',
+      '--rev-border':'rgba(67,233,123,0.35)','--glow':'rgba(67,233,123,0.45)',
+      '--card-bg':'rgba(255,255,255,0.07)','--card-border':'rgba(67,233,123,0.18)'
     }
-    list.innerHTML = history.map(h => {
-      const tagClass = h.mode === '2' ? 't2' : '';
-      const revStr = h.rev !== h.num ? ` <span class="h-rev">/ ${h.rev}</span>` : '';
-      return `<div class="history-item">
-        <div>
-          <span class="h-num">${h.num}</span>${revStr}
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
-          <span class="h-tag ${tagClass}">${h.mode} ตัว ${h.pos}</span>
-          <span style="font-size:0.72rem;color:#4a5568;">${h.time}</span>
-        </div>
-      </div>`;
-    }).join('');
+  },
+  {
+    name: 'ม่วง',
+    dot: 'linear-gradient(135deg,#a855f7,#ec4899)',
+    vars: {
+      '--bg1':'#120520','--bg2':'#1a0a2e','--bg3':'#250f45',
+      '--accent1':'#d8b4fe','--accent2':'#a855f7','--accent3':'#ec4899',
+      '--rev-color':'#f0abfc','--rev-bg':'rgba(168,85,247,0.08)',
+      '--rev-border':'rgba(168,85,247,0.35)','--glow':'rgba(168,85,247,0.5)',
+      '--card-bg':'rgba(255,255,255,0.07)','--card-border':'rgba(168,85,247,0.2)'
+    }
+  },
+  {
+    name: 'ฟ้า',
+    dot: 'linear-gradient(135deg,#3b82f6,#06b6d4)',
+    vars: {
+      '--bg1':'#040f24','--bg2':'#071a3e','--bg3':'#0c2a5a',
+      '--accent1':'#60a5fa','--accent2':'#3b82f6','--accent3':'#06b6d4',
+      '--rev-color':'#a5f3fc','--rev-bg':'rgba(6,182,212,0.08)',
+      '--rev-border':'rgba(6,182,212,0.35)','--glow':'rgba(59,130,246,0.5)',
+      '--card-bg':'rgba(255,255,255,0.07)','--card-border':'rgba(59,130,246,0.2)'
+    }
+  },
+  {
+    name: 'แดง',
+    dot: 'linear-gradient(135deg,#ef4444,#f97316)',
+    vars: {
+      '--bg1':'#200808','--bg2':'#2d0c0c','--bg3':'#3d1010',
+      '--accent1':'#fca5a5','--accent2':'#ef4444','--accent3':'#f97316',
+      '--rev-color':'#fed7aa','--rev-bg':'rgba(239,68,68,0.08)',
+      '--rev-border':'rgba(239,68,68,0.35)','--glow':'rgba(239,68,68,0.5)',
+      '--card-bg':'rgba(255,255,255,0.07)','--card-border':'rgba(239,68,68,0.2)'
+    }
+  },
+  {
+    name: 'ชมพู',
+    dot: 'linear-gradient(135deg,#f472b6,#fb7185)',
+    vars: {
+      '--bg1':'#1f0518','--bg2':'#2d0a22','--bg3':'#3d0f2f',
+      '--accent1':'#f9a8d4','--accent2':'#f472b6','--accent3':'#fb7185',
+      '--rev-color':'#fecdd3','--rev-bg':'rgba(244,114,182,0.08)',
+      '--rev-border':'rgba(244,114,182,0.35)','--glow':'rgba(244,114,182,0.5)',
+      '--card-bg':'rgba(255,255,255,0.07)','--card-border':'rgba(244,114,182,0.2)'
+    }
   }
+];
 
-  function clearHistory() {
-    history = [];
-    localStorage.removeItem('lotto_history');
-    renderHistory();
+let currentTheme = parseInt(localStorage.getItem('lotto_theme') || '0');
+
+function applyTheme(idx) {
+  currentTheme = idx;
+  localStorage.setItem('lotto_theme', idx);
+  const t = THEMES[idx];
+  const root = document.documentElement;
+  Object.entries(t.vars).forEach(([k, v]) => root.style.setProperty(k, v));
+  document.querySelectorAll('.theme-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+function buildThemeDots() {
+  const row = document.getElementById('themesRow');
+  row.innerHTML = THEMES.map((t, i) => `
+    <button class="theme-dot ${i === currentTheme ? 'active' : ''}"
+      style="background:${t.dot}"
+      data-name="${t.name}"
+      onclick="applyTheme(${i})"
+      title="${t.name}">
+    </button>
+  `).join('');
+}
+
+/* ══════════════════════════════════════
+   AUDIO (Web Audio API — no files needed)
+══════════════════════════════════════ */
+let audioCtx = null;
+let soundOn = true;
+
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playTick() {
+  if (!soundOn) return;
+  try {
+    const ctx = getAudio();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.setValueAtTime(600 + Math.random() * 400, ctx.currentTime);
+    o.type = 'square';
+    g.gain.setValueAtTime(0.06, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+    o.start(); o.stop(ctx.currentTime + 0.06);
+  } catch(e) {}
+}
+
+function playWin() {
+  if (!soundOn) return;
+  try {
+    const ctx = getAudio();
+    const notes = [523, 659, 784, 1047];
+    notes.forEach((freq, i) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = freq;
+      o.type = 'sine';
+      const t = ctx.currentTime + i * 0.12;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.18, t + 0.04);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      o.start(t); o.stop(t + 0.3);
+    });
+  } catch(e) {}
+}
+
+function toggleSound() {
+  soundOn = !soundOn;
+  document.getElementById('soundToggle').classList.toggle('on', soundOn);
+}
+
+/* ══════════════════════════════════════
+   CONFETTI
+══════════════════════════════════════ */
+const canvas = document.getElementById('confettiCanvas');
+const ctx2d   = canvas.getContext('2d');
+let confetti  = [];
+
+function launchConfetti() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colors = ['#f9c74f','#f8961e','#f3722c','#90cdf4','#a855f7','#43e97b','#fb7185'];
+  for (let i = 0; i < 90; i++) {
+    confetti.push({
+      x: Math.random() * canvas.width,
+      y: -10 - Math.random() * 60,
+      w: 6 + Math.random() * 8,
+      h: 10 + Math.random() * 10,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 3,
+      vy: 2 + Math.random() * 4,
+      rot: Math.random() * Math.PI * 2,
+      rv: (Math.random() - 0.5) * 0.2,
+      alpha: 1
+    });
   }
+  animateConfetti();
+}
 
-  // Init
+function animateConfetti() {
+  ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+  confetti = confetti.filter(p => p.alpha > 0.02);
+  confetti.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.rot += p.rv;
+    if (p.y > canvas.height * 0.7) p.alpha -= 0.025;
+    ctx2d.save();
+    ctx2d.globalAlpha = p.alpha;
+    ctx2d.translate(p.x, p.y);
+    ctx2d.rotate(p.rot);
+    ctx2d.fillStyle = p.color;
+    ctx2d.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+    ctx2d.restore();
+  });
+  if (confetti.length > 0) requestAnimationFrame(animateConfetti);
+}
+
+/* ══════════════════════════════════════
+   CORE LOGIC
+══════════════════════════════════════ */
+let mode = '3';
+let pos  = 'บน';
+let count = 1;
+let history = JSON.parse(localStorage.getItem('lotto_history') || '[]');
+let spinning = false;
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && m === '3') || (i === 1 && m === '2'));
+  });
   resetDisplay();
+}
+
+function setPos(p) {
+  pos = p;
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === p);
+  });
+}
+
+function updateCount(v) {
+  count = parseInt(v);
+  document.getElementById('countVal').textContent = v;
+}
+
+function rand(digits) {
+  return Math.floor(Math.random() * Math.pow(10, digits)).toString().padStart(digits, '0');
+}
+
+function reverse(str) { return str.split('').reverse().join(''); }
+
+function resetDisplay() {
+  const d = mode === '3' ? 3 : 2;
+  renderResult(['?'.repeat(d)], false);
+}
+
+function renderResult(nums, animate) {
+  const area = document.getElementById('displayArea');
+  const modeLabel = mode === '3' ? 'เลขท้าย 3 ตัว' : 'เลขท้าย 2 ตัว';
+  let html = `<span class="result-label">${modeLabel} — ${pos}</span>`;
+
+  nums.forEach((num, idx) => {
+    const rev = reverse(num);
+    const cls = animate && idx === 0 ? 'digit-box spin' : 'digit-box';
+    const boxes = num.split('').map(d => `<div class="${cls}">${d}</div>`).join('');
+    html += `<div class="digits-wrap">${boxes}</div>`;
+    if (!num.includes('?') && rev !== num) {
+      const revBoxes = rev.split('').map(d => `<div class="rev-box">${d}</div>`).join('');
+      html += `
+        <div class="reverse-row">
+          <span class="rev-label">🔄 กลับ</span>
+          <div class="reverse-digits">${revBoxes}</div>
+        </div>`;
+    }
+    if (idx < nums.length - 1) html += `<div class="divider"></div>`;
+  });
+
+  area.innerHTML = html;
+}
+
+function spin() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+
+  const digits = mode === '3' ? 3 : 2;
+  const positions = pos === 'บน+ล่าง' ? ['บน', 'ล่าง'] : [pos];
+  const results = [];
+
+  for (let i = 0; i < count; i++) {
+    positions.forEach(p => {
+      results.push({ num: rand(digits), pos: p });
+    });
+  }
+
+  const finalNums = results.map(r => r.num);
+  const totalFrames = 22;
+  let frame = 0;
+
+  const tick = setInterval(() => {
+    frame++;
+    playTick();
+
+    const tempNums = finalNums.map((final, ni) => {
+      return final.split('').map((ch, ci) => {
+        const revealAt = totalFrames - (digits - ci);
+        return frame >= revealAt ? ch : Math.floor(Math.random() * 10).toString();
+      }).join('');
+    });
+
+    renderResult(tempNums, false);
+
+    if (frame >= totalFrames) {
+      clearInterval(tick);
+      renderResult(finalNums, false);
+      playWin();
+      launchConfetti();
+      spinning = false;
+      document.getElementById('spinBtn').disabled = false;
+
+      results.forEach(r => {
+        history.unshift({
+          num: r.num,
+          rev: reverse(r.num),
+          pos: r.pos,
+          mode,
+          time: new Date().toLocaleTimeString('th-TH')
+        });
+      });
+      if (history.length > 60) history = history.slice(0, 60);
+      localStorage.setItem('lotto_history', JSON.stringify(history));
+      renderHistory();
+    }
+  }, 60);
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (history.length === 0) {
+    list.innerHTML = '<p class="empty-msg">ยังไม่มีการสุ่ม กดปุ่มด้านบนเลย!</p>';
+    return;
+  }
+  list.innerHTML = history.map(h => {
+    const tagCls = h.mode === '2' ? 't2' : '';
+    const revStr = h.rev && h.rev !== h.num
+      ? `<span class="h-rev">/ ${h.rev}</span>` : '';
+    return `<div class="history-item">
+      <div><span class="h-num">${h.num}</span>${revStr}</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <span class="h-tag ${tagCls}">${h.mode} ตัว ${h.pos}</span>
+        <span class="h-time">${h.time}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function clearHistory() {
+  history = [];
+  localStorage.removeItem('lotto_history');
   renderHistory();
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+buildThemeDots();
+applyTheme(currentTheme);
+resetDisplay();
+renderHistory();
 </script>
 </body>
 </html>

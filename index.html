@@ -2,7 +2,10 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>สุ่มเลขหวย 🎰</title>
   <style>
     :root {
@@ -20,40 +23,45 @@
       --card-border: rgba(255,255,255,0.12);
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       min-height: 100vh;
+      min-height: 100dvh;
       background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
       font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif;
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 16px 60px;
+      padding: 20px 14px calc(env(safe-area-inset-bottom) + 48px);
+      padding-top: calc(env(safe-area-inset-top) + 20px);
       transition: background 0.5s;
+      overflow-x: hidden;
     }
 
     /* ── Theme switcher ── */
     .themes-row {
       display: flex;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
       justify-content: center;
     }
 
     .theme-dot {
-      width: 28px;
-      height: 28px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       cursor: pointer;
       border: 3px solid transparent;
       transition: transform 0.2s, border-color 0.2s;
       position: relative;
+      /* bigger touch target */
+      touch-action: manipulation;
     }
 
-    .theme-dot:hover { transform: scale(1.2); }
+    .theme-dot:active { transform: scale(0.92); }
     .theme-dot.active { border-color: #fff; transform: scale(1.15); }
     .theme-dot::after {
       content: attr(data-name);
@@ -66,11 +74,13 @@
       white-space: nowrap;
       opacity: 0;
       transition: opacity 0.2s;
+      pointer-events: none;
     }
-    .theme-dot:hover::after { opacity: 1; }
+    @media (hover: hover) { .theme-dot:hover::after { opacity: 1; } }
+    @media (hover: hover) { .theme-dot:hover { transform: scale(1.2); } }
 
     h1 {
-      font-size: 2rem;
+      font-size: clamp(1.5rem, 6vw, 2rem);
       font-weight: 900;
       letter-spacing: 2px;
       margin-bottom: 6px;
@@ -81,24 +91,27 @@
     }
 
     .subtitle {
-      font-size: 0.82rem;
+      font-size: 0.75rem;
       color: #a0aec0;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       letter-spacing: 2px;
     }
 
     /* ── Tabs ── */
     .tabs {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       background: rgba(255,255,255,0.06);
       border-radius: 16px;
-      padding: 6px;
-      margin-bottom: 24px;
+      padding: 5px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px;
     }
 
     .tab {
-      padding: 9px 26px;
+      flex: 1;
+      padding: 11px 0;
       border-radius: 12px;
       border: none;
       cursor: pointer;
@@ -107,6 +120,8 @@
       transition: all 0.25s;
       background: transparent;
       color: #a0aec0;
+      touch-action: manipulation;
+      min-height: 44px;
     }
 
     .tab.active {
@@ -115,7 +130,7 @@
       box-shadow: 0 4px 14px var(--glow);
     }
 
-    .tab:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.08); }
+    @media (hover: hover) { .tab:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.08); } }
 
     /* ── Card ── */
     .card {
@@ -123,27 +138,30 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--card-border);
-      border-radius: 28px;
-      padding: 32px 28px;
+      border-radius: 24px;
+      padding: clamp(20px, 5vw, 32px) clamp(16px, 5vw, 28px);
       width: 100%;
       max-width: 500px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 22px;
+      gap: 18px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
     }
 
     /* ── Options ── */
     .options {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
       justify-content: center;
+      width: 100%;
     }
 
     .opt-btn {
-      padding: 8px 20px;
+      flex: 1;
+      min-width: 70px;
+      padding: 10px 12px;
       border-radius: 50px;
       border: 1.5px solid rgba(255,255,255,0.18);
       background: transparent;
@@ -152,6 +170,8 @@
       cursor: pointer;
       transition: all 0.2s;
       font-weight: 600;
+      min-height: 44px;
+      touch-action: manipulation;
     }
 
     .opt-btn.active {
@@ -160,7 +180,8 @@
       color: var(--accent1);
     }
 
-    .opt-btn:hover:not(.active) { border-color: #fff; color: #fff; }
+    .opt-btn:active { transform: scale(0.95); }
+    @media (hover: hover) { .opt-btn:hover:not(.active) { border-color: #fff; color: #fff; } }
 
     /* ── Display ── */
     .display-area {
@@ -186,15 +207,15 @@
     }
 
     .digit-box {
-      width: 76px;
-      height: 96px;
-      border-radius: 18px;
+      width: clamp(58px, 18vw, 76px);
+      height: clamp(74px, 23vw, 96px);
+      border-radius: 16px;
       background: linear-gradient(160deg, rgba(255,255,255,0.13), rgba(255,255,255,0.04));
       border: 1.5px solid rgba(255,255,255,0.18);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 3.2rem;
+      font-size: clamp(2.2rem, 8vw, 3.2rem);
       font-weight: 900;
       color: var(--accent1);
       text-shadow: 0 0 24px var(--glow);
@@ -225,26 +246,28 @@
     .reverse-row {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
       background: var(--rev-bg);
       border: 1px dashed var(--rev-border);
       border-radius: 14px;
-      padding: 10px 18px;
+      padding: 8px 14px;
+      width: 100%;
+      justify-content: center;
     }
 
-    .rev-label { font-size: 0.72rem; color: var(--rev-color); letter-spacing: 1px; opacity: 0.8; }
+    .rev-label { font-size: 0.7rem; color: var(--rev-color); letter-spacing: 1px; opacity: 0.8; }
 
-    .reverse-digits { display: flex; gap: 8px; }
+    .reverse-digits { display: flex; gap: 6px; }
 
     .rev-box {
-      width: 50px;
-      height: 62px;
-      border-radius: 12px;
+      width: clamp(40px, 13vw, 50px);
+      height: clamp(50px, 16vw, 62px);
+      border-radius: 10px;
       background: rgba(0,0,0,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: clamp(1.4rem, 5.5vw, 2rem);
       font-weight: 800;
       color: var(--rev-color);
     }
@@ -262,8 +285,34 @@
     .count-row input[type=range] {
       flex: 1;
       accent-color: var(--accent1);
-      height: 4px;
+      height: 6px;
       cursor: pointer;
+      /* iOS fix */
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(255,255,255,0.15);
+      border-radius: 99px;
+      outline: none;
+      touch-action: manipulation;
+    }
+
+    .count-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent1);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .count-row input[type=range]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent1);
+      cursor: pointer;
+      border: none;
     }
 
     .count-val {
@@ -277,19 +326,23 @@
     /* ── Spin Button ── */
     .btn-spin {
       width: 100%;
-      padding: 17px;
+      padding: 18px;
       border-radius: 18px;
       border: none;
       background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
       background-size: 200% 200%;
       color: #1a1a2e;
-      font-size: 1.15rem;
+      font-size: clamp(1rem, 4vw, 1.15rem);
       font-weight: 900;
       cursor: pointer;
       letter-spacing: 1.5px;
       transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
       box-shadow: 0 8px 28px var(--glow);
       animation: gradShift 3s ease infinite;
+      min-height: 56px;
+      touch-action: manipulation;
+      /* prevent iOS callout on long press */
+      -webkit-touch-callout: none;
     }
 
     @keyframes gradShift {
@@ -298,31 +351,36 @@
       100% { background-position: 0% 50%; }
     }
 
-    .btn-spin:hover:not(:disabled) {
-      transform: translateY(-3px);
-      box-shadow: 0 14px 36px var(--glow);
+    @media (hover: hover) {
+      .btn-spin:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 36px var(--glow);
+      }
     }
 
-    .btn-spin:active:not(:disabled) { transform: translateY(0); }
+    .btn-spin:active:not(:disabled) { transform: scale(0.97); }
     .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* ── Sound toggle ── */
     .sound-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       align-self: flex-end;
+      padding: 4px 0;
     }
 
     .sound-toggle {
-      width: 40px;
-      height: 22px;
+      width: 48px;
+      height: 28px;
       background: rgba(255,255,255,0.15);
       border-radius: 50px;
       cursor: pointer;
       border: none;
       position: relative;
       transition: background 0.3s;
+      touch-action: manipulation;
+      flex-shrink: 0;
     }
 
     .sound-toggle.on { background: linear-gradient(90deg, var(--accent1), var(--accent2)); }
@@ -330,18 +388,18 @@
     .sound-toggle::after {
       content: '';
       position: absolute;
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       background: #fff;
       border-radius: 50%;
-      top: 3px;
-      left: 3px;
+      top: 4px;
+      left: 4px;
       transition: left 0.3s;
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
-    .sound-toggle.on::after { left: 21px; }
-    .sound-label { font-size: 0.78rem; color: #a0aec0; }
+    .sound-toggle.on::after { left: 24px; }
+    .sound-label { font-size: 0.8rem; color: #a0aec0; }
 
     /* ── Divider ── */
     .divider {
@@ -355,7 +413,7 @@
     .history-section {
       width: 100%;
       max-width: 500px;
-      margin-top: 24px;
+      margin-top: 20px;
     }
 
     .history-header {
@@ -371,22 +429,27 @@
       background: transparent;
       border: 1px solid rgba(255,255,255,0.15);
       color: #a0aec0;
-      padding: 5px 14px;
+      padding: 8px 16px;
       border-radius: 8px;
       font-size: 0.78rem;
       cursor: pointer;
       transition: all 0.2s;
+      min-height: 36px;
+      touch-action: manipulation;
     }
 
-    .btn-clear:hover { border-color: #f3722c; color: #f3722c; }
+    .btn-clear:active { border-color: #f3722c; color: #f3722c; }
+    @media (hover: hover) { .btn-clear:hover { border-color: #f3722c; color: #f3722c; } }
 
     .history-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 300px;
+      max-height: 320px;
       overflow-y: auto;
       padding-right: 4px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
 
     .history-list::-webkit-scrollbar { width: 4px; }
@@ -409,14 +472,14 @@
     }
 
     .h-num {
-      font-size: 1.5rem;
+      font-size: clamp(1.2rem, 5vw, 1.5rem);
       font-weight: 900;
       color: var(--accent1);
-      letter-spacing: 5px;
+      letter-spacing: 4px;
     }
 
     .h-rev {
-      font-size: 0.95rem;
+      font-size: clamp(0.82rem, 3.5vw, 0.95rem);
       color: var(--rev-color);
       letter-spacing: 3px;
       margin-left: 6px;
@@ -445,9 +508,23 @@
       z-index: 999;
     }
 
-    @media (max-width: 380px) {
-      .digit-box { width: 64px; height: 82px; font-size: 2.6rem; }
-      .rev-box   { width: 42px; height: 54px; font-size: 1.6rem; }
+    /* ── Extra small phones (SE, Galaxy A) ── */
+    @media (max-width: 360px) {
+      h1 { font-size: 1.3rem; }
+      .card { gap: 14px; }
+      .opt-btn { font-size: 0.78rem; padding: 8px 6px; }
+    }
+
+    /* ── Landscape mobile ── */
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { padding-top: 12px; padding-bottom: 24px; }
+      h1 { font-size: 1.2rem; margin-bottom: 2px; }
+      .subtitle { display: none; }
+      .themes-row { margin-bottom: 8px; }
+      .tabs { margin-bottom: 10px; }
+      .card { gap: 12px; padding: 14px; }
+      .digit-box { width: 52px; height: 66px; font-size: 2rem; }
+      .rev-box { width: 38px; height: 48px; font-size: 1.4rem; }
     }
   </style>
 </head>
